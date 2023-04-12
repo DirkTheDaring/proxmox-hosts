@@ -1,0 +1,20 @@
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  loop:
+    - "/etc/fedora-container-sync"
+
+- name: Create config file if does not exist
+  ansible.builtin.template:
+    src: "{{ item | basename }}.jinja2"
+    dest: "{{ item }}"
+    owner: root
+    group: root
+    mode: '0644'
+    # force: no      # if the file exists we do nothing
+  loop:
+    - "/etc/fedora-container-sync/fedora-container-sync.conf"

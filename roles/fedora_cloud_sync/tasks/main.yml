@@ -1,0 +1,4 @@
+- name: File Config
+  ansible.builtin.import_tasks: "files-config.yml"
+- name: Services
+  ansible.builtin.import_tasks: "services.yml"

@@ -1,0 +1,23 @@
+- name: Check if /etc/storage-configuration.conf exists
+  ansible.builtin.stat:
+   path: /etc/storage-configuration.conf
+  register: storage
+
+- name: Create /etc/storage-configuration if it does not exist
+  ansible.builtin.file:
+   path: /etc/storage-configuration.conf
+   state: touch
+   owner: root
+   mode: '0644'
+  when: storage.stat.exists is defined and not storage.stat.exists
+
+- name: Create template /etc/storage-configuration.conf
+  ansible.builtin.template:
+   src: storage-configuration.conf.jinja2
+   dest: /etc/storage-configuration.conf
+   owner: root
+   group: root
+   mode: '0644'
+  register: storage_conf
+
+# - name: run configuration if /etc/storage-configuration.conf has changed

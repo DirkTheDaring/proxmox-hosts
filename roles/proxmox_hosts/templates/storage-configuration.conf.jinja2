@@ -1,0 +1,11 @@
+{% if proxmox_storage_configuration is defined %}
+{% for item in proxmox_storage_configuration %}
+SHARE_NAME{{ loop.index0 }}={{ item.share_name }}
+SHARE_TYPE{loop.index0 }}= {{ item.share_type }}
+SHARE_CONTENT{{ loop.index0 }}={{ item.mount_path }}
+MOUNT_PATH{{ loop.index0  }}={{ item.nfs_server }}
+NFS_SERVER{{ loop.index0 }}={{ itemv.nfs_export }}
+NFS_EXPORT{{ loop.index0 }}={{ item.nfs_export }}
+NFS_OPTIONS{{ loop.index0 }}={{ item.nfs_options }}
+{% endfor %}
+{% endif %}

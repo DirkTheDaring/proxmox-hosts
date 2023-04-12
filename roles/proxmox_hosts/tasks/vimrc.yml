@@ -1,0 +1,10 @@
+- name: Create .vimrc for user root if it doesn't exist
+  ansible.builtin.template:
+    src: "vimrc.jinja2"
+    dest: "{{ item }}"
+    owner: root
+    group: root
+    mode: '0644'
+    force: false # if the file exists we do nothing
+  loop:
+    - "/root/.vimrc"

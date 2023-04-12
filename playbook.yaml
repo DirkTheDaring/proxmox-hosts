@@ -1,0 +1,31 @@
+- name: Configure proxmox hosts
+  roles:
+    - proxmox_hosts
+  hosts:
+    - proxmox_hosts
+  tags:
+    - proxmox_hosts
+
+- name: Install fcos sync
+  roles:
+    - fcos_sync
+  hosts:
+    - proxmox_hosts
+  tags:
+    - fcos_sync
+
+- name: Install fedora-cloud sync
+  roles:
+    - fedora_cloud_sync
+  hosts:
+    - proxmox_hosts
+  tags:
+    - fedora_cloud_sync
+
+- name: Install fedora-container sync
+  roles:
+    - fedora_container_sync
+  hosts:
+    - proxmox_hosts
+  tags:
+    - fedora_container_sync

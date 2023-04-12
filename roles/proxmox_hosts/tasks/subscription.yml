@@ -1,0 +1,14 @@
+- name: Remove file /etc/apt/sources.list.d/pve-enterprise.list
+  ansible.builtin.file:
+    path: /etc/apt/sources.list.d/pve-enterprise.list
+    state: absent
+
+- name: Create no subscription pve repo entry
+  ansible.builtin.template:
+    src: "{{ item | basename }}.jinja2"
+    dest: "{{ item }}"
+    owner: root
+    group: root
+    mode: '0644'
+  with_items:
+    - "/etc/apt/sources.list.d/pve-no-subscription.list"

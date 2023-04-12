@@ -1,0 +1,10 @@
+[Unit]
+Description=fedora-container-sync-external timer
+[Timer]
+# fedora-container-sync-external will start 23:00, a hour later
+OnCalendar=*-*-* 22:00:00
+# Persistent=True triggers the service immediately if it missed the last start time
+Persistent=True
+Unit=fedora-container-sync-external.service
+[Install]
+WantedBy=timers.target

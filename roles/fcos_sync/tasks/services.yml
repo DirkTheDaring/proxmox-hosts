@@ -1,0 +1,68 @@
+- name: Create config file for external sync
+  ansible.builtin.template:
+    src: "{{ item | basename }}.jinja2"
+    dest: "{{ item }}"
+    owner: root
+    group: root
+    mode: '0644'
+  loop:
+    - "/etc/systemd/system/fcos-sync-external.service"
+    - "/etc/systemd/system/fcos-sync-external.timer"
+  register: fcos_external
+  when:
+    - inventory_hostname == download_host
+
+- name: Remove files for services if they exist on the other hosts
+  ansible.builtin.file:
+    path: "/usr/local/bin/{{ item | basename }}"
+    state: absent
+  loop:
+    - "/etc/systemd/system/fcos-sync-external.service"
+    - "/etc/systemd/system/fcos-sync-external.timer"
+  when:
+    - inventory_hostname != download_host
+
+- name: Restart fcos-sync-external service
+  ansible.builtin.service:
+    name: fcos-sync-external.service
+    daemon_reload: true
+    state: restarted
+  when:
+    - inventory_hostname == download_host
+    - fcos_external.changed
+
+- name: Create config file for local sync
+  ansible.builtin.template:
+    src: "{{ item | basename }}.jinja2"
+    dest: "{{ item }}"
+    owner: root
+    group: root
+    mode: '0644'
+  loop:
+    - "/etc/systemd/system/fcos-sync-local.service"
+    - "/etc/systemd/system/fcos-sync-local.timer"
+  register: fcos_local
+
+- name: Restart fcos-sync-local service
+  ansible.builtin.service:
+    name: fcos-sync-local.service
+    state: restarted
+    daemon_reload: true
+  when: fcos_local.changed
+  tags:
+    - skip_ansible_lint
+
+- name: Enable and Start fcos-sync-local.timer
+  ansible.builtin.systemd:
+    name: fcos-sync-local.timer
+    state: started
+    daemon_reload: true
+    enabled: true
+
+- name: Enable and Start fcos-sync-external.timer
+  ansible.builtin.systemd:
+    name: fcos-sync-external.timer
+    state: started
+    enabled: true
+  when:
+    - inventory_hostname == download_host

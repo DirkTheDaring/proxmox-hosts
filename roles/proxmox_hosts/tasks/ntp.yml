@@ -1,0 +1,18 @@
+- name: Create config file for systemd-timesyncd
+  ansible.builtin.template:
+    src: "{{ item | basename }}.jinja2"
+    dest: "{{ item }}"
+    owner: root
+    group: root
+    mode: '0644'
+  loop:
+    - "/etc/systemd/timesyncd.conf"
+  register: proxmox_ntp
+
+- name: Restart service systemd-timesyncd
+  ansible.builtin.service:
+    name: systemd-timesyncd
+    state: restarted
+  when: proxmox_ntp.changed
+  tags:
+    - skip_ansible_lint

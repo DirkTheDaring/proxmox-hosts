@@ -1,0 +1,9 @@
+# /etc/systemd/system/fedora-container-customize.service
+[Unit]
+Description=fedora-container-customize start service
+After=network-online.target
+[Service]
+WorkingDirectory=/usr/local/bin
+ExecStart=/usr/local/bin/fedora-container-customize.sh
+Type=oneshot
+TimeoutSec=0

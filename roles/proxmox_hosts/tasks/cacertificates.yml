@@ -1,0 +1,19 @@
+# https://pve.proxmox.com/wiki/Certificate_Management
+# https://forum.proxmox.com/threads/pveproxy-fails-to-load-local-certificate-chain-after-upgrade-to-pve-6.56060/
+#
+- name: Certificates
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /usr/local/share/ca-certificates
+    owner: root
+    group: www-data
+    mode: '0640'
+  with_fileglob:
+    - "{{ configuration_name }}/{{ configuration_stage }}/cacerts/*.crt"
+  register: proxmox_cacert
+
+- name: Update ca certificate list
+  ansible.builtin.command: "update-ca-certificates"
+  when: proxmox_cacert.changed
+  tags:
+    - skip_ansible_lint

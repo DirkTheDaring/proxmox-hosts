@@ -1,0 +1,40 @@
+- name: Certificates
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /etc/ssl/certs
+    owner: root
+    group: www-data
+    mode: '0640'
+  with_fileglob:
+    - "{{ configuration_name }}/{{ configuration_stage }}/certs/pveproxy/*.crt"
+  register: proxmox_cert
+
+- name: Certificate keys
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /etc/ssl/private
+    owner: root
+    group: www-data
+    mode: '0640'
+  with_fileglob:
+    - "{{ configuration_name }}/{{ configuration_stage }}/certs/pveproxy/*.key"
+  register: proxmox_cert_private
+
+- name: Install pveproxy-ssl cert
+  ansible.builtin.command: "cp -a /etc/ssl/certs/{{ proxmox_host_cert_domain }}.crt   /etc/pve/nodes/{{ inventory_hostname_short }}/pveproxy-ssl.pem"
+  when: proxmox_cert.changed
+  tags:
+    - skip_ansible_lint
+
+- name: Install pveproxy-ssl certkey
+  ansible.builtin.command: "cp -a /etc/ssl/private/{{ proxmox_host_cert_domain }}.key /etc/pve/nodes/{{ inventory_hostname_short }}/pveproxy-ssl.key"
+  when: proxmox_cert_private.changed
+  register: proxmox_installed_cert
+  tags:
+    - skip_ansible_lint
+
+- name: Restart pveproxy
+  ansible.builtin.command: "/usr/bin/systemctl restart pveproxy"
+  when: proxmox_installed_cert.changed
+  tags:
+    - skip_ansible_lint

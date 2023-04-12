@@ -1,0 +1,32 @@
+# Source:
+# https://github.com/fabianishere/pve-edge-kernel
+
+- name: Add gpg signature for pve kernels
+  ansible.builtin.get_url:
+    url: "https://dl.cloudsmith.io/public/pve-edge/kernel/gpg.8EC01CCF309B98E7.key"
+    dest: "/etc/apt/trusted.gpg.d/pve-edge-kernel.asc"
+    mode: '0644'
+  register: pve_edge_kernel_key
+
+- name: Convert to .asc key to gpg v4
+  ansible.builtin.command: "gpg --dearmor /etc/apt/trusted.gpg.d/pve-edge-kernel.asc"
+  when: pve_edge_kernel_key.changed
+  tags:
+    - skip_ansible_lint
+
+- name: Remove file /etc/apt/sources.list.d/pve-edge-kernel.list
+  ansible.builtin.file:
+    path: /etc/apt/sources.list.d/pve-edge-kernel.list
+    state: absent
+  when: not pve_edge_kernel
+
+- name: Create pve edge kernel entry
+  ansible.builtin.template:
+    src: "{{ item | basename }}.jinja2"
+    dest: "{{ item }}"
+    owner: root
+    group: root
+    mode: '0644'
+  with_items:
+    - "/etc/apt/sources.list.d/pve-edge-kernel.list"
+  when: pve_edge_kernel

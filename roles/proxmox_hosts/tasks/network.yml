@@ -1,0 +1,10 @@
+- name: Setup network interfaces
+  ansible.builtin.template:
+    src: "{{ item | basename }}.jinja2"
+    dest: "{{ item }}"
+    owner: root
+    group: root
+    mode: '0644'
+  loop:
+    - "/etc/network/interfaces"
+  when: interfaces is defined and interfaces|length

@@ -1,0 +1,73 @@
+- name: Set Fact
+  ansible.builtin.set_fact:
+    systemd_services:
+      - "/etc/systemd/system/fedora-container-sync-external.service"
+      - "/etc/systemd/system/fedora-container-customize.service"
+    systemd_timers:
+      - "/etc/systemd/system/fedora-container-sync-external.timer"
+      - "/etc/systemd/system/fedora-container-customize.timer"
+    file_list:
+      - "/usr/local/bin/fedora-container-customize.sh"
+      - "/usr/local/bin/fedora-container-sync-external.sh"
+
+- name: Remove scripts which on host which are not a download host
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop: "{{ file_list }}"
+  when:
+    - inventory_hostname != download_host
+
+- name: Disable timers which are not on download_host
+  ansible.builtin.systemd:
+    name: "{{ item | basename }}"
+    state: stopped
+    enabled: false
+  loop: "{{ systemd_timers }}"
+  when:
+    - inventory_hostname != download_host
+  ignore_errors: true # FIXME lint error
+  tags:
+    - skip_ansible_lint
+
+- name: Remove services/timers on hosts which are not a download host
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop: "{{ systemd_timers + systemd_services }}"
+  when:
+    - inventory_hostname != download_host
+
+- name: Install services/timers
+  ansible.builtin.template:
+    src: "{{ item | basename }}.jinja2"
+    dest: "{{ item }}"
+    owner: root
+    group: root
+    mode: '0644'
+  loop: "{{ systemd_services + systemd_timers }}"
+  when:
+    - inventory_hostname == download_host
+
+- name: Install scripts for external sync
+  ansible.builtin.copy:
+    src: "{{ item | basename }}"
+    dest: "{{ item }}"
+    owner: root
+    group: root
+    mode: '0755'
+  loop: "{{ file_list }}"
+  when:
+    - inventory_hostname == download_host
+
+- name: Enable and Start timers
+  ansible.builtin.systemd:
+    name: "{{ item | basename }}"
+    state: started
+    enabled: true
+  loop: "{{ systemd_timers }}"
+  when:
+    - inventory_hostname == download_host
+  ignore_errors: true # FIXME lint error
+  tags:
+    - skip_ansible_lint

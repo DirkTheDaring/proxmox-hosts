@@ -1,0 +1,9 @@
+# /etc/systemd/system/fcos-sync-local.service
+[Unit]
+Description=fcos-sync-local start service
+After=network-online.target
+[Service]
+WorkingDirectory=/usr/local/bin
+ExecStart=/usr/local/bin/fcos-sync-local.sh
+Type=oneshot
+TimeoutSec=0

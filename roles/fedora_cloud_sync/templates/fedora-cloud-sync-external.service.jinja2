@@ -1,0 +1,9 @@
+# /etc/systemd/system/fedora-cloud-sync-external.service
+[Unit]
+Description=fedora-cloud-sync-external start service
+After=network-online.target
+[Service]
+WorkingDirectory=/usr/local/bin
+ExecStart=/usr/local/bin/fedora-cloud-sync-external.sh
+Type=oneshot
+TimeoutSec=0

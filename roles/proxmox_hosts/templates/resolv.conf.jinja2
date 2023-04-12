@@ -1,0 +1,6 @@
+search {{ resolv_conf.search | join(" ") }}
+{% for nameserver in resolv_conf.nameserver %}
+nameserver {{ nameserver }}
+{% endfor %}
+ndots:2
+

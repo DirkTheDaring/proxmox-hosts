@@ -1,0 +1,10 @@
+[Unit]
+Description=fedora-container-customize timer
+[Timer]
+# fedora-container-customize will start 23:00, a hour later
+OnCalendar=*-*-* 22:30:00
+# Persistent=True triggers the service immediately if it missed the last start time
+Persistent=True
+Unit=fedora-container-customize.service
+[Install]
+WantedBy=timers.target

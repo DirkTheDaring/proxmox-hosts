@@ -1,0 +1,39 @@
+- name: Storage
+  ansible.builtin.import_tasks: "storage.yml"
+- name: Network
+  ansible.builtin.import_tasks: "network.yml"
+- name: Hosts
+  ansible.builtin.import_tasks: "hosts.yml"
+- name: Subscription
+  ansible.builtin.import_tasks: "subscription.yml"
+- name: Pve Edge Kernel
+  ansible.builtin.import_tasks: "pveedgekernel.yml"
+- name: Packagesj
+  ansible.builtin.import_tasks: "packages.yml"
+- name: Scripts
+  ansible.builtin.import_tasks: "scripts.yml"
+- name: Vimrc
+  ansible.builtin.import_tasks: "vimrc.yml"
+
+- name: Modules
+  ansible.builtin.import_tasks: "modules.yml"
+- name: Iommu
+  ansible.builtin.import_tasks: "iommu.yml"
+- name: Kvm
+  ansible.builtin.import_tasks: "kvm.yml"
+
+- name: Grub
+  ansible.builtin.import_tasks: "grub.yml"
+- name: Sysctl
+  ansible.builtin.import_tasks: "sysctl.yml"
+
+- name: Resolvej
+  ansible.builtin.import_tasks: "resolv.yml"
+- name: Ntp
+  ansible.builtin.import_tasks: "ntp.yml"
+
+- name: Cpu Models
+  ansible.builtin.import_tasks: "cpu-models.yml"
+
+# - ansible.builtin.import_tasks: "cacertificates.yml"
+# - ansible.builtin.import_tasks: "certificates.yml"

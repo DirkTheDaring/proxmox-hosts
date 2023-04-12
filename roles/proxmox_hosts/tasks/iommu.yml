@@ -1,0 +1,55 @@
+- name: Set Facts
+  ansible.builtin.set_fact:
+    iommu_file: "/etc/modprobe.d/iommu.conf"
+
+- name: Create /etc/modprobe.d/iommu-blacklist.conf if does not exist
+  ansible.builtin.template:
+    src: "{{ item | basename }}.jinja2"
+    dest: "{{ item }}"
+    owner: root
+    group: root
+    mode: '0644'
+    force: false  # only if file does not exist
+  loop:
+    - "{{ iommu_file }}"
+
+#  register: modprobe_blacklist_trigger
+# https://forum.proxmox.com/threads/gpu-passthrough-tutorial-reference.34303/
+
+# - name: "create blacklist for iommu /etc/modeprobe.d/iommu-blacklist.conf"
+#   ansible.builtin.lineinfile:
+#     state:  "{{ 'present' if iommu_blacklist_enable else 'absent' }}"
+#     path:   /etc/modprobe.d/iommu-blacklist.conf
+#     regexp: "^blacklist {{ item }}[ |\t]*$"
+#     line:   "blacklist {{ item }}"
+#     create: yes
+#   loop: "{{ iommu_device_blacklist }}"
+
+- name: Create blacklist for iommu /etc/modeprobe.d/iommu.conf
+  ansible.builtin.lineinfile:
+    state: "{{ 'present' if iommu_blacklist_enable else 'absent' }}"
+    path: "{{ iommu_file }}"
+    regexp: "^softdep[ |\t]+{{ item }}[ |\t]+.*$"
+    line: "softdep {{ item }} pre: vfio-pci"
+    create: true
+    mode: '0644'
+  loop: "{{ iommu_device_blacklist }}"
+- name: Create vfio-pci option # /etc/modeprobe.d/iommu.conf
+  ansible.builtin.lineinfile:
+    state: present
+    path: "{{ iommu_file }}"
+    regexp: "^options vfio-pci[ |\t]+.*$"
+    line: "options vfio-pci ids={{ vfio_pci_list | join(',') }}{{ ' disable_vga=1' if vfio_disable_vga else '' }}"
+    create: true
+    mode: '0644'
+  when: vfio_pci_list is defined and vfio_pci_list|length
+
+- name: Create kvm_amd option # /etc/modeprobe.d/iommu.conf
+  ansible.builtin.lineinfile:
+    state: present
+    path: "{{ iommu_file }}"
+    regexp: "^options kvm_amd[ |\t]+.*$"
+    line: "options kvm_amd sev=1"
+    create: true
+    mode: '0644'
+  when: ansible_processor[1] == "AuthenticAMD"

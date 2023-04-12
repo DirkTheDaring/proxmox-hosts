@@ -1,0 +1,10 @@
+- name: Custom CPU model configuration file
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/etc/pve/virtual-guest/{{ item | basename }}"
+    # due to pve file system no setting of owner,group,mode allowed
+    # mode: '0644'
+  loop:
+    - "cpu-models.conf"
+  tags:
+    - skip_ansible_lint

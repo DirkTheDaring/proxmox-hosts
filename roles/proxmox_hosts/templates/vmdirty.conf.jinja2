@@ -1,0 +1,16 @@
+# {{ item }} - ansible
+
+# After experimenting this was a good value for
+# a 16 GB RAM Server
+# Standard values led to very poor right performance
+# with long backlogs in the write queues
+#
+# Use e.g. "nmon" to monitor this backlog and the
+# behaviour change when you start tuning things
+# Also see
+# http://hep.kbfi.ee/index.php/IT/KernelTuninga
+# https://lonesysadmin.net/2013/12/22/better-linux-disk-caching-performance-vm-dirty_ratio/
+# https://www.blackmoreops.com/2014/09/22/linux-kernel-panic-issue-fix-hung_task_timeout_secs-blocked-120-seconds-problem/
+
+vm.dirty_background_ratio = 3
+vm.dirty_ratio = 10

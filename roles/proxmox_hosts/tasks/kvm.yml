@@ -1,0 +1,11 @@
+- name: Create /etc/modeprobe.d/nested-virtualization.conf if it does not exist
+  ansible.builtin.template:
+   src: "{{ item | basename }}.jinja2"
+   dest: "{{ item }}"
+   owner: root
+   group: root
+   mode: '0644'
+   force: false   #  only creat
+  loop:
+   - "/etc/modprobe.d/nested-virtualization.conf"
+  register: proxmox_nested_virtualization_trigger

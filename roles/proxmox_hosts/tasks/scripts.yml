@@ -1,0 +1,24 @@
+- name: Create directories
+  ansible.builtin.file:
+   path: "{{ item }}"
+   state: directory
+   mode: '0755'
+   owner: root
+   group: root
+  loop:
+   - /root/bin
+
+- name: Install maintenance scripts in /root/bin
+  ansible.builtin.copy:
+   src: "{{ item }}"
+   dest: "/root/bin/{{ item | basename }}"
+   owner: root
+   group: root
+   mode: '0755'
+  loop:
+   - "upgrade-proxmox.sh"
+   - "dump-kvm-parameters.sh"
+   - "show_pci_acs.sh"
+   - "vbios-dumper.sh"
+   - "iommu_groups.sh"
+   - "disk-devices.sh"

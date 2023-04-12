@@ -1,0 +1,57 @@
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+    owner: root
+    group: root
+  loop:
+    - /etc/fcos-sync
+
+- name: Create config file if does not exist
+  ansible.builtin.template:
+    src: "{{ item | basename }}.jinja2"
+    dest: "{{ item }}"
+    owner: root
+    group: root
+    mode: '0644'
+    # force: no      # if the file exists we do nothing
+  loop:
+    - "/etc/fcos-sync/fcos-sync.conf"
+
+- name: Install fcos scripts for external sync
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/usr/local/bin/{{ item | basename }}"
+    owner: root
+    group: root
+    mode: '0755'
+  loop:
+    - "fcos-download-simple.sh"
+    - "fcos-latest-version.sh"
+    - "fcos-sync-external.sh"
+  when:
+    - inventory_hostname == download_host
+
+- name: Remove files if they exist on the other hosts
+  ansible.builtin.file:
+    path: "/usr/local/bin/{{ item | basename }}"
+    state: absent
+  loop:
+    - "fcos-download-simple.sh"
+    - "fcos-latest-version.sh"
+    - "fcos-sync-external.sh"
+  when:
+    - inventory_hostname != download_host
+
+
+- name: Install fcos scripts for local sync
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/usr/local/bin/{{ item | basename }}"
+    owner: root
+    group: root
+    mode: '0755'
+  loop:
+    - "fcos-unpack.sh"
+    - "fcos-sync-local.sh"

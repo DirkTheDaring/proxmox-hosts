@@ -1,0 +1,10 @@
+- name: Apt update
+  ansible.builtin.apt:
+    cache_valid_time: 3600
+
+- name: Install packages
+  ansible.builtin.apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - jq

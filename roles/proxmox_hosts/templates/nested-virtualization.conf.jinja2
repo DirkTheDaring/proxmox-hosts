@@ -1,0 +1,8 @@
+# https://pve.proxmox.com/wiki/Nested_Virtualization
+# https://docs.fedoraproject.org/en-US/quick-docs/using-nested-virtualization-in-kvm/
+{% if ansible_processor[1] == "AuthenticAMD" %}
+options kvm_amd nested=1
+{% endif %}
+{% if ansible_processor[1] == "GenuineIntel" %}
+options kvm_intel nested=1
+{% endif %}

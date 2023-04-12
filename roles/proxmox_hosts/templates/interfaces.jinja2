@@ -1,0 +1,34 @@
+auto lo
+iface lo inet loopback
+{% for interface in interfaces %}
+{% if interface.type == "manual" %}
+
+iface {{ interface.name }} inet manual
+{% endif %}
+{% if interface.type == "bridge" %}
+
+auto {{ interface.name }}
+iface {{ interface.name }} inet static
+        address {{ interface.address }}
+        netmask {{ interface.netmask }}
+{% if 'gateway' in interface %}
+        gateway {{ interface.gateway }}
+{% endif %}
+        bridge_ports {{ interface.ports | join(" ") }}
+        bridge_stp off
+        bridge_fd 0
+{% if interface.proxmox_host_network_quirk is defined %}
+{% for port in interface.ports %}
+        pre-up  ethtool -K {{ port }} tso off gso off
+{% endfor %}
+        post-up ethtool -K {{ interface.name }} tso off gso off
+{% endif %}
+{% endif %}
+{% if interface.type == "private" %}
+
+auto {{ interface.name }}
+iface {{ interface.name }} inet static
+        address {{ interface.address }}
+        netmask {{ interface.netmask }}
+{% endif %}
+{% endfor %}

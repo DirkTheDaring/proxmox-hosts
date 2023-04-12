@@ -1,0 +1,44 @@
+# remove _offline to overwrite  all networks on your machine (WUHAHA...evil laughter....)
+domain: fritz.box
+
+interfaces_offline:
+  - name: ens33
+    type: manual
+  - name: vmbr0
+    type: bridge
+    address: 192.168.178.250
+    netmask: 255.255.0.0
+    gateway: 192.168.178.1
+    ports: ['ens33']
+    proxmox_host_network_quirk: false
+
+resolv_conf_offline:
+  search:
+    - fritz.box
+  nameserver:
+    - 192.168.178.3
+    - fd00::256a:387:af4f:9a4b
+
+grub_options: []
+#  - kvm.ignore_msrs=1
+#  - intel_iommu=on
+#  - "kvm.ignore_msrs=1"
+#  - "libata.force=1:noncq,1:3.0,2:noncq,2:3.0,3:noncq,3:3.0,4:noncq,4:3.0,5:noncq,5:3.0,6:noncq,6:3.0"
+
+ntpservers:
+  - 0.de.pool.ntp.org
+  - 1.de.pool.ntp.org
+  - 2.de.pool.ntp.org
+  - 3.de.pool.ntp.org
+
+vfio_disable_vga: false
+iommu_blacklist_enable: false
+
+iommu_device_blacklist:
+  - radeon
+  - nouveau
+  - nvidia
+  - snd_hda_intel
+  - amdgpu
+
+pve_edge_kernel: true

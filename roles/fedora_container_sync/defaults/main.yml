@@ -1,0 +1,4 @@
+fcos_dir: "/mnt/pve/shared/download"
+target_dir: "/var/lib/vz/images/000"
+
+download_host: "{{ ansible_play_hosts_all[0] }}"
