@@ -1,0 +1,12 @@
+# Hosts MUST have an ip address to be pingable
+all:
+  hosts:
+    pve:
+      ansible_host: 192.168.178.10
+    pve2:
+      ansible_host: 192.168.178.11
+    pve3:
+      ansible_host: 192.168.178.12
+  vars:
+    ansible_user:  root
+    download_host: pve

@@ -1,0 +1,7 @@
+# Assembles hosts in a group based on a filter
+plugin: group_assembler
+
+# when the host is pingeable it will go into proxmox_hosts
+ping_filter:
+  proxmox_hosts:
+    group: all
