@@ -42,3 +42,5 @@ iommu_device_blacklist:
   - amdgpu
 
 pve_edge_kernel: true
+
+ntp_solution: chrony

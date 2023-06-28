@@ -1,0 +1,6 @@
+#/etc/chrony/sources.d/local-ntp-server.sources
+{% if ntpservers %}
+{% for ntpserver in ntpservers %}
+server {{ ntpserver }} iburst
+{% endfor %}
+{% endif %}

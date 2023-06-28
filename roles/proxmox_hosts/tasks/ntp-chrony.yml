@@ -1,0 +1,17 @@
+- name: Create config file for chrony
+  ansible.builtin.template:
+    src: "{{ item | basename }}.jinja2"
+    dest: "{{ item }}"
+    owner: root
+    group: root
+    mode: '0644'
+  loop:
+    - "/etc/chrony/sources.d/local-ntp-server.sources"
+  register: proxmox_ntp2
+
+- name: reload ntp sources in chrony
+  ansible.builtin.command: chronyc reload sources
+  when:
+    - proxmox_ntp2.changed
+  tags:
+    - skip_ansible_lint

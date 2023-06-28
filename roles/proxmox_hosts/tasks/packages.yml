@@ -14,5 +14,13 @@
     # just auto-install packages
     - unattended-upgrades
     - apt-listchanges
-    - systemd-timesyncd
+    - chrony
 #  when: proxmox_host_network_quirk == True
+
+- name: Uninstall packages
+  ansible.builtin.apt:
+   name: "{{ packages }}"
+   state: absent
+  vars:
+    packages:
+      - systemd-timesyncd
