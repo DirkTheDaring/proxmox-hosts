@@ -19,11 +19,11 @@ cpu-model: qemu64-x86-64-v4
     hidden 0
     hv-vendor-id proxmox
     reported-model qemu64
-<% if ansible_processor[1] == "AuthenticAMD" %>
+{% if ansible_processor[1] == "AuthenticAMD" %}
 {% set kvm = "+svm" %}
-<% else %>
+{% else %}
 {% set kvm = "+vmx" %}
-<% endif %>
+{% endif %}
 
 cpu-model: qemu64-x86-64-v2-nested-virtualization
     flags +ssse3;+sse4_1;+sse4_2;+popcnt;+lahf-lm;{{ kvm }}
@@ -46,4 +46,3 @@ cpu-model: qemu64-x86-64-v4-nested-virtualization
     hidden 0
     hv-vendor-id proxmox
     reported-model qemu64
-<% endif %>
