@@ -1,10 +1,38 @@
-- name: Custom CPU model configuration file
-  ansible.builtin.template:
-    src: "{{ item | basename }}.jinja2"
-    dest: "{{ item }}"
-    # due to pve file system no setting of owner,group,mode allowed
-    # mode: '0644'
-  loop:
-    - "/etc/pve/virtual-guest/cpu-models.conf"
-  tags:
-    - skip_ansible_lint
+- name: Check if /etc/pve/virtual-guest/cpu-models.conf exists
+  ansible.builtin.stat:
+    path: /etc/pve/virtual-guest/cpu-models.conf
+  register: cpu_models_conf
+
+# this all exists due to the peculiar nature of the filesystem in /etc/pve
+# of promox
+# name: Execute only if it doesn't exist or force is set
+
+- name: Execute only if it doesn't exist or force is set
+  when: not cpu_models_conf.stat.exists or force_cpu_models_replacement
+  block:
+    - name: Custom CPU model configuration file
+      ansible.builtin.template:
+        src: "{{ item | basename }}.jinja2"
+        dest: "/tmp/cpu-models.conf"
+        mode: '0644'
+      loop:
+        - "/etc/pve/virtual-guest/cpu-models.conf"
+      tags:
+        - skip_ansible_lint
+
+#    - name: Copy /etc/pve/virtual-guest/cpu-models.conf to /etc/tmp
+#      ansible.builtin.copy:
+#        src: /tmp/cpu-models.conf
+#        dest: /etc/pve/virtual-guest/cpu-models.conf
+#        remote_src: yes
+
+    - name: Copy tmp file to /etc/pve/virtual-guest/cpu-models.conf
+      shell: |
+        cp -f /tmp/cpu-models.conf /etc/pve/virtual-guest/cpu-models.conf
+      args:
+        executable: /bin/bash
+
+    - name: Delete tmp file
+      ansible.builtin.file:
+        path: /tmp/cpu-models.conf
+        state: absent

@@ -22,3 +22,4 @@
    - "vbios-dumper.sh"
    - "iommu_groups.sh"
    - "disk-devices.sh"
+   - "cpu-model-support-check.sh"
