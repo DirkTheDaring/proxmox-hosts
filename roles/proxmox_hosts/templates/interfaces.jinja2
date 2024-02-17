@@ -19,9 +19,11 @@ iface {{ interface.name }} inet static
         bridge_fd 0
 {% if interface.proxmox_host_network_quirk is defined %}
 {% for port in interface.ports %}
-        pre-up  ethtool -K {{ port }} tso off gso off
+        # Enable TCP segmentation offload
+        pre-up  ethtool -K {{ port }} tx on sg on tso on
 {% endfor %}
-        post-up ethtool -K {{ interface.name }} tso off gso off
+        # Enable TCP segmentation offload
+        post-up ethtool -K {{ interface.name }} tx on sg on tso on
 {% endif %}
 {% endif %}
 {% if interface.type == "private" %}
