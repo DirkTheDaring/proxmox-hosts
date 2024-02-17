@@ -24,13 +24,13 @@ iface {{ interface.name }} inet static
 {% if interface.ethernet_wol is defined  %}
         ethernet-wol {{ interface.ethernet_wol }}
 {% endif %}
-{% if interface.proxmox_host_network_quirk is defined %}
+{% if interface.proxmox_host_network_quirk is defined and interface.proxmox_host_network_quirk %}
 {% for port in interface.ports %}
         pre-up  ethtool -K {{ port }} tso off gso off
 {% endfor %}
         post-up ethtool -K {{ interface.name }} tso off gso off
 {% endif %}
-{% if interface.proxmox_host_network_enable_tcp_segmentation_offload is defined %}
+{% if interface.proxmox_host_network_enable_tcp_segmentation_offload is defined  and interface.proxmox_host_network_enable_tcp_segmentation_offload %}
         # Enable TCP segmentation offload
 {% for port in interface.ports %}
         pre-up  ethtool -K {{ port }} tx on sg on tso on
