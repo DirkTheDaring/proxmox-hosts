@@ -13,6 +13,9 @@ interfaces_offline:
     gateway: 192.168.178.1
     ports: ['ens33']
     proxmox_host_network_quirk: false
+    proxmox_host_network_enable_tcp_segmentation_offload: false
+    ethernet_wol: g
+    bridge_vlan_aware: yes
 
 resolv_conf_offline:
   search:
