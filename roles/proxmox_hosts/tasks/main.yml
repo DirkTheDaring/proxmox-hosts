@@ -6,8 +6,11 @@
   ansible.builtin.import_tasks: "hosts.yml"
 - name: Subscription
   ansible.builtin.import_tasks: "subscription.yml"
-- name: Pve Edge Kernel
-  ansible.builtin.import_tasks: "pveedgekernel.yml"
+
+# Deprecated
+#- name: Pve Edge Kernel
+#  ansible.builtin.import_tasks: "pveedgekernel.yml"
+
 - name: Packagesj
   ansible.builtin.import_tasks: "packages.yml"
 - name: Scripts
